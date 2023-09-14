@@ -27,7 +27,7 @@ public class PayService {
     }
 
     @Transactional
-    public ResponseEntity<String> requestFinalPayment(String paymentKey, String orderId, int amount) {
+    public PayDto requestFinalPayment(String paymentKey, String orderId, int amount) {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
@@ -43,12 +43,14 @@ public class PayService {
         json.put("paymentKey", paymentKey);
         json.put("amount", amount);
 
-        ResponseEntity<String> response = rest.postForEntity(
+        PayDto body = rest.postForEntity(
                 "https://api.tosspayments.com/v1/payments/confirm",
                 new HttpEntity<>(json, headers),
-                String.class
-        );
-        return response;
+                PayDto.class
+        ).getBody();
+
+
+        return body;
     }
 
 }
